@@ -86,6 +86,30 @@
             return "Our pricing is flexible. What do you want to know?";
         if (msg.includes("help"))
             return "Sure! Tell me what issue you’re facing.";
+         // GPS not updating
+    if (msg.includes("update") || msg.includes("not update") || msg.includes("location issue")) {
+        return "अगर GPS location update नहीं कर रहा है, तो कृपया device को open area में रखें और SIM data on हो। 😊\n\nअगर आपका पुराना device खराब है, तो नया best GPS tracker यहाँ उपलब्ध है 👇\n👉 https://yourwebsite.com/buy-gps";
+    }
+
+    // GPS offline
+    if (msg.includes("offline") || msg.includes("not working") || msg.includes("disconnect")) {
+        return "GPS offline दिखा रहा है? इसका कारण SIM expiry, low battery या poor network हो सकता है। पहले device restart करें। 🔄\n\nअगर आपका device पुराना है, नया GPS यहाँ से खरीदें 👇\n👉 https://yourwebsite.com/buy-gps";
+    }
+
+    // Live tracking request
+    if (msg.includes("live tracking") || msg.includes("real time")) {
+        return "Real-time tracking के लिए आपका device active होना चाहिए और SIM में balance/data होना चाहिए। 😊\n\nसबसे fast tracking वाला GPS device यहाँ available है:\n👉 https://yourwebsite.com/buy-gps";
+    }
+
+    // History / Playback
+    if (msg.includes("history") || msg.includes("playback")) {
+        return "History/Playback देखने के लिए app में ‘History’ option open करें और date select करें। 📅\n\nअगर आपको नया GPS चाहिए तो यहाँ देखें:\n👉 https://yourwebsite.com/buy-gps";
+    }
+
+    // Default response
+    return "आपकी GPS समस्या detail में बताइये—मैं आपकी मदद करने के लिए यहाँ हूँ 😊\nअगर आप नया GPS लेना चाहें तो यहाँ देखें:\n👉 https://yourwebsite.com/buy-gps";
+}
         return "Thank you! A support person will reply soon.";
     }
 })();
+
