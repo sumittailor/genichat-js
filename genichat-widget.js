@@ -1,11 +1,20 @@
 (function () {
+
+    // Get config from WordPress
+    const config = window.genichatConfig || {
+        widgetTitle: "GeniChat",
+        themeColor: "#1E3A8A",
+        whatsappNumber: ""
+    };
+
+    /* --- Floating Chat Button --- */
     const chatButton = document.createElement("div");
     chatButton.id = "GeniChatButton";
     chatButton.style = `
         position: fixed;
         bottom: 20px;
         right: 20px;
-        background: #1E3A8A;
+        background: ${config.themeColor};
         color: white;
         padding: 15px 18px;
         border-radius: 50%;
@@ -17,6 +26,7 @@
     chatButton.innerHTML = "💬";
     document.body.appendChild(chatButton);
 
+    /* --- Chat Box UI --- */
     const chatBox = document.createElement("div");
     chatBox.id = "GeniChatBox";
     chatBox.style = `
@@ -34,16 +44,24 @@
         overflow: hidden;
     `;
     chatBox.innerHTML = `
-        <div style="background:#1E3A8A;color:white;padding:12px;font-size:18px;">GeniChat</div>
+        <div style="background:${config.themeColor};color:white;padding:12px;font-size:18px;" id="gcHeader">
+            ${config.widgetTitle}
+        </div>
+
         <div id="gcMessages" style="flex:1; padding:10px; overflow-y:auto; font-size:14px;"></div>
+
         <div style="padding:10px; display:flex; gap:5px;">
             <input id="gcInput" type="text" placeholder="Type message..."
                 style="flex:1;padding:8px;border:1px solid #ccc;border-radius:5px;" />
-            <button id="gcSend" style="padding:8px 12px;background:#1E3A8A;color:white;border:none;border-radius:5px;">Send</button>
+
+            <button id="gcSend" 
+                style="padding:8px 12px;background:${config.themeColor};
+                color:white;border:none;border-radius:5px;">Send</button>
         </div>
     `;
     document.body.appendChild(chatBox);
 
+    /* --- Open/Close --- */
     chatButton.onclick = () => {
         chatBox.style.display = chatBox.style.display === "none" ? "flex" : "none";
     };
@@ -53,18 +71,24 @@
         if (e.key === "Enter") sendMsg();
     });
 
+    /* --- Message Handler --- */
     function sendMsg() {
         const input = document.getElementById("gcInput");
         const msg = input.value.trim();
         if (!msg) return;
+
         addMsg("user", msg);
         input.value = "";
+
+        // 🔥 Send to WordPress REST for WhatsApp notification
+        sendToBackend(msg);
 
         setTimeout(() => {
             addMsg("bot", getReply(msg));
         }, 500);
     }
 
+    /* --- Add message to screen --- */
     function addMsg(sender, text) {
         const box = document.getElementById("gcMessages");
         const msg = document.createElement("div");
@@ -78,18 +102,31 @@
         box.scrollTop = box.scrollHeight;
     }
 
+    /* --- Bot replies (same as before) --- */
     function getReply(msg) {
         msg = msg.toLowerCase();
         if (msg.includes("hello") || msg.includes("hi"))
-            return "Hello! I'm GeniChat. How can I help you today?";
+            return "Hello! How can I help you today?";
         if (msg.includes("price"))
             return "Our pricing is flexible. What do you want to know?";
         if (msg.includes("help"))
             return "Sure! Tell me what issue you’re facing.";
         return "Thank you! A support person will reply soon.";
     }
+
+    /* --- NEW: Send to WordPress REST API for WhatsApp --- */
+    function sendToBackend(message) {
+        fetch("/wp-json/genichat/v1/send", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                message: message,
+                user_number: "Unknown" // you can add input box later
+            })
+        })
+        .then(res => res.json())
+        .then(data => console.log("WhatsApp status:", data))
+        .catch(err => console.error("Error:", err));
+    }
+
 })();
-
-
-
-
