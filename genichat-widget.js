@@ -4,8 +4,18 @@
     const config = window.genichatConfig || {
         widgetTitle: "GeniChat",
         themeColor: "#1E3A8A",
-        whatsappNumber: ""
+        adminStatus: "offline"
     };
+
+    /* ------------------------------------------
+       Function: Get Admin Status from WordPress
+    ------------------------------------------ */
+    async function getAdminStatus() {
+        return fetch("/wp-json/genichat/v1/status")
+            .then(res => res.json())
+            .then(data => data.status)
+            .catch(() => "offline");
+    }
 
     /* --- Floating Chat Button --- */
     const chatButton = document.createElement("div");
@@ -61,7 +71,7 @@
     `;
     document.body.appendChild(chatBox);
 
-    /* --- Open/Close --- */
+    /* --- Open/Close Button --- */
     chatButton.onclick = () => {
         chatBox.style.display = chatBox.style.display === "none" ? "flex" : "none";
     };
@@ -71,8 +81,10 @@
         if (e.key === "Enter") sendMsg();
     });
 
-    /* --- Message Handler --- */
-    function sendMsg() {
+    /* ------------------------------------------
+       Message Handler with Admin Status Logic
+    ------------------------------------------ */
+    async function sendMsg() {
         const input = document.getElementById("gcInput");
         const msg = input.value.trim();
         if (!msg) return;
@@ -80,15 +92,21 @@
         addMsg("user", msg);
         input.value = "";
 
-        // 🔥 Send to WordPress REST for WhatsApp notification
-        sendToBackend(msg);
+        // 🔥 CHECK ADMIN STATUS (Online/Offline)
+        const status = await getAdminStatus();
 
+        if (status === "online") {
+            addMsg("bot", "Admin is online and will reply shortly 😊");
+            return;
+        }
+
+        // 🟡 Admin Offline → Auto Bot Reply
         setTimeout(() => {
             addMsg("bot", getReply(msg));
         }, 500);
     }
 
-    /* --- Add message to screen --- */
+    /* --- Add message in window --- */
     function addMsg(sender, text) {
         const box = document.getElementById("gcMessages");
         const msg = document.createElement("div");
@@ -102,7 +120,7 @@
         box.scrollTop = box.scrollHeight;
     }
 
-    /* --- Bot replies (same as before) --- */
+    /* --- Auto Bot Replies --- */
     function getReply(msg) {
         msg = msg.toLowerCase();
         if (msg.includes("hello") || msg.includes("hi"))
@@ -111,22 +129,7 @@
             return "Our pricing is flexible. What do you want to know?";
         if (msg.includes("help"))
             return "Sure! Tell me what issue you’re facing.";
-        return "Thank you! A support person will reply soon.";
-    }
-
-    /* --- NEW: Send to WordPress REST API for WhatsApp --- */
-    function sendToBackend(message) {
-        fetch("/wp-json/genichat/v1/send", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                message: message,
-                user_number: "Unknown" // you can add input box later
-            })
-        })
-        .then(res => res.json())
-        .then(data => console.log("WhatsApp status:", data))
-        .catch(err => console.error("Error:", err));
+        return "Thank you! A support person will get back to you soon.";
     }
 
 })();
