@@ -105,17 +105,26 @@
        WhatsApp Forward API
     ------------------------------------------ */
     function sendToWhatsApp(message) {
-        fetch("/wp-json/genichat/v1/send", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                message: message
-            })
+    fetch("/wp-json/genichat/v1/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            message: message
         })
-        .then(r => r.json())
-        .then(res => console.log("WhatsApp:", res))
-        .catch(err => console.error("WA Error:", err));
-    }
+    })
+    .then(r => r.json())
+    .then(res => {
+
+        // agar admin online hai → WhatsApp open karo
+        if (res.success && res.online && res.whatsapp_url) {
+            window.open(res.whatsapp_url, "_blank");
+        }
+
+        console.log("WhatsApp:", res);
+    })
+    .catch(err => console.error("WA Error:", err));
+}
+
 
     function addMsg(sender, text) {
         const box = document.getElementById("gcMessages");
@@ -142,3 +151,4 @@
     }
 
 })();
+
