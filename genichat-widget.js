@@ -1,6 +1,5 @@
 (function () {
 
-    // Get config from WordPress
     const config = window.genichatConfig || {
         widgetTitle: "GeniChat",
         themeColor: "#1E3A8A",
@@ -8,9 +7,6 @@
         adminNumber: ""
     };
 
-    /* ------------------------------------------
-       Function: Get Admin Status from WordPress
-    ------------------------------------------ */
     async function getAdminStatus() {
         return fetch("/wp-json/genichat/v1/status")
             .then(res => res.json())
@@ -18,7 +14,6 @@
             .catch(() => "offline");
     }
 
-    /* --- Floating Chat Button --- */
     const chatButton = document.createElement("div");
     chatButton.id = "GeniChatButton";
     chatButton.style = `
@@ -37,7 +32,6 @@
     chatButton.innerHTML = "💬";
     document.body.appendChild(chatButton);
 
-    /* --- Chat Box UI --- */
     const chatBox = document.createElement("div");
     chatBox.id = "GeniChatBox";
     chatBox.style = `
@@ -72,7 +66,6 @@
     `;
     document.body.appendChild(chatBox);
 
-    /* --- Open/Close Button --- */
     chatButton.onclick = () => {
         chatBox.style.display = chatBox.style.display === "none" ? "flex" : "none";
     };
@@ -82,9 +75,9 @@
         if (e.key === "Enter") sendMsg();
     });
 
-    /* ------------------------------------------
-       Message Handler With WhatsApp Sending
-    ------------------------------------------ */
+    /* ------------------------------------------------------
+       FIXED FUNCTION → Always Send WhatsApp Message
+    ------------------------------------------------------ */
     async function sendMsg() {
         const input = document.getElementById("gcInput");
         const msg = input.value.trim();
@@ -93,26 +86,23 @@
         addMsg("user", msg);
         input.value = "";
 
-        // 🔥 CHECK ADMIN STATUS
+        // 🔥 ALWAYS SEND TO WHATSAPP (Online or Offline)
+        sendToWhatsApp(msg);
+
         const status = await getAdminStatus();
 
         if (status === "online") {
             addMsg("bot", "Admin is online and will reply shortly 😊");
-
-            // SEND MESSAGE TO WORDPRESS → WhatsApp
-            sendToWhatsApp(msg);
-
             return;
         }
 
-        // 🟡 Admin Offline → Auto Bot Reply
         setTimeout(() => {
             addMsg("bot", getReply(msg));
         }, 500);
     }
 
     /* ------------------------------------------
-       NEW FUNCTION → Send Chat to WhatsApp
+       WhatsApp Forward API
     ------------------------------------------ */
     function sendToWhatsApp(message) {
         fetch("/wp-json/genichat/v1/send", {
@@ -127,7 +117,6 @@
         .catch(err => console.error("WA Error:", err));
     }
 
-    /* --- Add message in window --- */
     function addMsg(sender, text) {
         const box = document.getElementById("gcMessages");
         const msg = document.createElement("div");
@@ -141,7 +130,6 @@
         box.scrollTop = box.scrollHeight;
     }
 
-    /* --- Auto Bot Replies --- */
     function getReply(msg) {
         msg = msg.toLowerCase();
         if (msg.includes("hello") || msg.includes("hi"))
@@ -149,7 +137,7 @@
         if (msg.includes("price"))
             return "Our pricing is flexible. What do you want to know?";
         if (msg.includes("help"))
-            return "Sure! Tell me what issue you’re facing.";
+            return "Sure! Tell me what issue you're facing.";
         return "Thank you! A support person will get back to you soon.";
     }
 
