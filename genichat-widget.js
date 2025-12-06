@@ -86,9 +86,10 @@
             return "Our pricing is flexible. What do you want to know?";
         if (msg.includes("help"))
             return "Sure! Tell me what issue you’re facing.";
-        return "Thank you! A support person will reply soon, contact with Sale manager +91 9079133547";
+        return "Thank you! A support person will reply soon.";
     }
 })();
+
 
 
 
