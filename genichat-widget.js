@@ -4,7 +4,8 @@
     const config = window.genichatConfig || {
         widgetTitle: "GeniChat",
         themeColor: "#1E3A8A",
-        adminStatus: "offline"
+        adminStatus: "offline",
+        adminNumber: ""
     };
 
     /* ------------------------------------------
@@ -82,7 +83,7 @@
     });
 
     /* ------------------------------------------
-       Message Handler with Admin Status Logic
+       Message Handler With WhatsApp Sending
     ------------------------------------------ */
     async function sendMsg() {
         const input = document.getElementById("gcInput");
@@ -92,11 +93,15 @@
         addMsg("user", msg);
         input.value = "";
 
-        // 🔥 CHECK ADMIN STATUS (Online/Offline)
+        // 🔥 CHECK ADMIN STATUS
         const status = await getAdminStatus();
 
         if (status === "online") {
             addMsg("bot", "Admin is online and will reply shortly 😊");
+
+            // SEND MESSAGE TO WORDPRESS → WhatsApp
+            sendToWhatsApp(msg);
+
             return;
         }
 
@@ -104,6 +109,22 @@
         setTimeout(() => {
             addMsg("bot", getReply(msg));
         }, 500);
+    }
+
+    /* ------------------------------------------
+       NEW FUNCTION → Send Chat to WhatsApp
+    ------------------------------------------ */
+    function sendToWhatsApp(message) {
+        fetch("/wp-json/genichat/v1/send", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                message: message
+            })
+        })
+        .then(r => r.json())
+        .then(res => console.log("WhatsApp:", res))
+        .catch(err => console.error("WA Error:", err));
     }
 
     /* --- Add message in window --- */
