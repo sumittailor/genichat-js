@@ -156,9 +156,6 @@ if (msg.includes("elog") || msg.includes("e-lock") || msg.includes("elock"))
 if (msg.includes("vehicle") || msg.includes("car") || msg.includes("bike"))
     return "We have multiple GPS trackers for cars, bikes, and trucks. Tell me your vehicle type and I’ll suggest the best option.";
 
-if (msg.includes("install") || msg.includes("installation"))
-    return "Installation is quick and easy! I can guide you or connect you to our technician. Which product do you want to install?";
-
 if (msg.includes("app") || msg.includes("login") || msg.includes("account"))
     return "For app support, tell me your issue — login problem, password reset, or device not showing?";
 
@@ -174,6 +171,7 @@ if (msg.includes("contact") || msg.includes("number") || msg.includes("call"))
     }
 
 })();
+
 
 
 
