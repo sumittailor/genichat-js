@@ -147,8 +147,29 @@
             return "Our pricing is flexible. What do you want to know?";
         if (msg.includes("help"))
             return "Sure! Tell me what issue you're facing.";
+        if (msg.includes("track") || msg.includes("tracking"))
+    return "You can track your device using the FeTaca Track App. Do you need the app link or help logging in?";
+
+if (msg.includes("elog") || msg.includes("e-lock") || msg.includes("elock"))
+    return "FeTaca E-Lock is a waterproof GPS smart lock with real-time tracking, tamper alerts, and remote unlocking. Would you like features, price, or installation details?";
+
+if (msg.includes("vehicle") || msg.includes("car") || msg.includes("bike"))
+    return "We have multiple GPS trackers for cars, bikes, and trucks. Tell me your vehicle type and I’ll suggest the best option.";
+
+if (msg.includes("install") || msg.includes("installation"))
+    return "Installation is quick and easy! I can guide you or connect you to our technician. Which product do you want to install?";
+
+if (msg.includes("app") || msg.includes("login") || msg.includes("account"))
+    return "For app support, tell me your issue — login problem, password reset, or device not showing?";
+
+if (msg.includes("order") || msg.includes("buy") || msg.includes("purchase"))
+    return "Great! Tell me which product you want to order, and I’ll share the purchase link.";
+
+if (msg.includes("contact") || msg.includes("number") || msg.includes("call"))
+    return "You can contact our support team anytime. Would you like the phone number or WhatsApp link?";
         return "Thank you! A support person will get back to you soon.";
     }
 
 })();
+
 
