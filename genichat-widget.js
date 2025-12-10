@@ -171,7 +171,7 @@ if (msg.includes("contact") || msg.includes("number") || msg.includes("call"))
        "3) Insert SIM with data.<br>" +
        "4) Power on vehicle.<br>" +
        "5) Add IMEI in FeTaca Track App.<br>" +
-        Full guide video: https://youtu.be/fXp1De_ZU1A?si=9aIcOR81i4CMKVx3
+        "Full guide video: https://youtu.be/fXp1De_ZU1A?si=9aIcOR81i4CMKVx3"
        "Full guide video: <a href=\"https://youtu.be/fXp1De_ZU1A?si=9aIcOR81i4CMKVx3\" target=\"_blank\">Watch here</a>";
 
 
@@ -179,6 +179,7 @@ if (msg.includes("contact") || msg.includes("number") || msg.includes("call"))
     }
 
 })();
+
 
 
 
