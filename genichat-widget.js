@@ -167,9 +167,13 @@ if (msg.includes("order") || msg.includes("buy") || msg.includes("purchase"))
 
 if (msg.includes("contact") || msg.includes("number") || msg.includes("call"))
     return "You can contact our support team anytime. Would you like the phone number or WhatsApp link?";
+ if (msg.includes("install") || msg.includes("installation"))
+    return "Wired GPS Tracker Installation:\n1) Hide device under dashboard/seat.\n2) RED → +12V, BLACK → ground, YELLOW → ignition.\n3) Insert SIM with data.\n4) Power on vehicle.\n5) Add IMEI in FeTaca Track App.\nFull guide video: https://youtu.be/fXp1De_ZU1A?si=9aIcOR81i4CMKVx3";
+
         return "Thank you! A support person will get back to you soon.";
     }
 
 })();
+
 
 
