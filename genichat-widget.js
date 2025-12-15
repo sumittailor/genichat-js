@@ -24,7 +24,7 @@
         bottom: 20px;
         right: 20px;
         background: ${config.themeColor};
-        color: white;
+        color: Blue;
         padding: 15px 18px;
         border-radius: 50%;
         cursor: pointer;
@@ -235,3 +235,4 @@
     }
 
 })();
+
