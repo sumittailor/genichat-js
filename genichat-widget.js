@@ -14,6 +14,9 @@
             .catch(() => "offline");
     }
 
+    // ------------------------------
+    // CHAT BUTTON
+    // ------------------------------
     const chatButton = document.createElement("div");
     chatButton.id = "GeniChatButton";
     chatButton.style = `
@@ -32,6 +35,9 @@
     chatButton.innerHTML = "💬";
     document.body.appendChild(chatButton);
 
+    // ------------------------------
+    // CHAT BOX
+    // ------------------------------
     const chatBox = document.createElement("div");
     chatBox.id = "GeniChatBox";
     chatBox.style = `
@@ -55,10 +61,13 @@
 
         <div id="gcMessages" style="flex:1; padding:10px; overflow-y:auto; font-size:14px;"></div>
 
+        <div style="padding:10px;">
+            <div id="gcSuggestions" style="display:flex; gap:5px; flex-wrap:wrap;"></div>
+        </div>
+
         <div style="padding:10px; display:flex; gap:5px;">
             <input id="gcInput" type="text" placeholder="Type message..."
                 style="flex:1;padding:8px;border:1px solid #ccc;border-radius:5px;" />
-
             <button id="gcSend" 
                 style="padding:8px 12px;background:${config.themeColor};
                 color:white;border:none;border-radius:5px;">Send</button>
@@ -66,6 +75,9 @@
     `;
     document.body.appendChild(chatBox);
 
+    // ------------------------------
+    // CHAT BUTTON TOGGLE
+    // ------------------------------
     chatButton.onclick = () => {
         chatBox.style.display = chatBox.style.display === "none" ? "flex" : "none";
     };
@@ -75,9 +87,43 @@
         if (e.key === "Enter") sendMsg();
     });
 
-    /* ------------------------------------------------------
-       FIXED FUNCTION → Always Send WhatsApp Message
-    ------------------------------------------------------ */
+    // ------------------------------
+    // DEFAULT SUGGESTIONS
+    // ------------------------------
+    const suggestions = [
+        "Hello",
+        "Price",
+        "Help",
+        "Track Device",
+        "E-Lock",
+        "Order",
+        "Installation"
+    ];
+
+    const suggContainer = document.getElementById("gcSuggestions");
+    suggestions.forEach(sugg => {
+        const btn = document.createElement("button");
+        btn.innerText = sugg;
+        btn.style = `
+            padding:5px 10px;
+            background:#F3F4F6;
+            border:1px solid #ccc;
+            border-radius:5px;
+            cursor:pointer;
+            font-size:13px;
+        `;
+        btn.onclick = () => {
+            document.getElementById("gcInput").value = sugg;
+            sendMsg();
+            // optional: remove suggestions after click
+            // suggContainer.innerHTML = "";
+        };
+        suggContainer.appendChild(btn);
+    });
+
+    // ------------------------------
+    // SEND MESSAGE FUNCTION
+    // ------------------------------
     async function sendMsg() {
         const input = document.getElementById("gcInput");
         const msg = input.value.trim();
@@ -86,7 +132,7 @@
         addMsg("user", msg);
         input.value = "";
 
-        // 🔥 ALWAYS SEND TO WHATSAPP (Online or Offline)
+        // 🔥 ALWAYS SEND TO WHATSAPP
         sendToWhatsApp(msg);
 
         const status = await getAdminStatus();
@@ -101,20 +147,17 @@
         }, 500);
     }
 
-    /* ------------------------------------------
-       WhatsApp Forward API
-    ------------------------------------------ */
+    // ------------------------------
+    // WHATSAPP FORWARD
+    // ------------------------------
     function sendToWhatsApp(message) {
         fetch("/wp-json/genichat/v1/send", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                message: message
-            })
+            body: JSON.stringify({ message: message })
         })
         .then(r => r.json())
         .then(res => {
-            // If admin online → open WhatsApp
             if (res.success && res.online && res.whatsapp_url) {
                 window.open(res.whatsapp_url, "_blank");
             }
@@ -123,6 +166,9 @@
         .catch(err => console.error("WA Error:", err));
     }
 
+    // ------------------------------
+    // ADD MESSAGE TO CHAT BOX
+    // ------------------------------
     function addMsg(sender, text) {
         const box = document.getElementById("gcMessages");
         const msg = document.createElement("div");
@@ -135,20 +181,21 @@
         `;
 
         if (sender === "bot") {
-            // Render HTML (for clickable links, line breaks)
             msg.innerHTML = text;
         } else {
-            // Plain text for user messages
             msg.innerText = text;
         }
         box.appendChild(msg);
         box.scrollTop = box.scrollHeight;
     }
 
+    // ------------------------------
+    // BOT REPLY FUNCTION
+    // ------------------------------
     function getReply(msg) {
         msg = msg.toLowerCase();
 
-       if (msg.includes("hello") || msg.includes("hlw") || msg.includes("hlo") || msg.includes("helo") || msg.includes("helllo") || msg.includes("heloo") || msg.includes("helloo") || msg.includes("heello") || msg.includes("hallo") || msg.includes("hlelo") || msg.includes("hrllo") || msg.includes("jello") || msg.includes("kello") || msg.includes("hi") || msg.includes("hii") || msg.includes("hiii") || msg.includes("hey") || msg.includes("heyy"))
+        if (msg.includes("hello") || msg.includes("hi") || msg.includes("hey"))
             return "Hello! How can I help you today?";
 
         if (msg.includes("price"))
@@ -175,7 +222,7 @@
         if (msg.includes("contact") || msg.includes("number") || msg.includes("call"))
             return "You can contact our support team anytime. Would you like the phone number or WhatsApp link?";
 
-        if (msg.includes("install") || msg.includes("installation") || msg.includes("setup") || msg.includes("fitting") || msg.includes("fit") || msg.includes("wiring") || msg.includes("connection") || msg.includes("connect") || msg.includes("kaise lagaye") || msg.includes("kaise install kare") || msg.includes("install kaise kare") || msg.includes("gps lagane ka tarika") || msg.includes("tracker installation") || msg.includes("device install") || msg.includes("gps setup") || msg.includes("how to install") || msg.includes("installation process"))
+        if (msg.includes("install") || msg.includes("installation") || msg.includes("setup") || msg.includes("fitting"))
             return "Wired GPS Tracker Installation:<br>" +
                 "1) Hide device under dashboard/seat.<br>" +
                 "2) RED → +12V, BLACK → ground, YELLOW → ignition.<br>" +
@@ -188,6 +235,3 @@
     }
 
 })();
-
-
-
