@@ -148,7 +148,7 @@
     function getReply(msg) {
         msg = msg.toLowerCase();
 
-        if (msg.includes("hello") || msg.includes("hi"))
+       if (msg.includes("hello") || msg.includes("helo") || msg.includes("helllo") || msg.includes("heloo") || msg.includes("helloo") || msg.includes("heello") || msg.includes("hallo") || msg.includes("hlelo") || msg.includes("hrllo") || msg.includes("jello") || msg.includes("kello") || msg.includes("hi") || msg.includes("hii") || msg.includes("hiii") || msg.includes("hey") || msg.includes("heyy"))
             return "Hello! How can I help you today?";
 
         if (msg.includes("price"))
@@ -175,7 +175,7 @@
         if (msg.includes("contact") || msg.includes("number") || msg.includes("call"))
             return "You can contact our support team anytime. Would you like the phone number or WhatsApp link?";
 
-        if (msg.includes("install") || msg.includes("installation"))
+        if (msg.includes("install") || msg.includes("installation") || msg.includes("setup") || msg.includes("fitting") || msg.includes("fit") || msg.includes("wiring") || msg.includes("connection") || msg.includes("connect") || msg.includes("kaise lagaye") || msg.includes("kaise install kare") || msg.includes("install kaise kare") || msg.includes("gps lagane ka tarika") || msg.includes("tracker installation") || msg.includes("device install") || msg.includes("gps setup") || msg.includes("how to install") || msg.includes("installation process"))
             return "Wired GPS Tracker Installation:<br>" +
                 "1) Hide device under dashboard/seat.<br>" +
                 "2) RED → +12V, BLACK → ground, YELLOW → ignition.<br>" +
@@ -188,3 +188,4 @@
     }
 
 })();
+
