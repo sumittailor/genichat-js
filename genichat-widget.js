@@ -106,7 +106,7 @@
         btn.innerText = sugg;
         btn.style = `
             padding:5px 10px;
-            background:#F3F4F6;
+            background:#0000ff;
             border:1px solid #ccc;
             border-radius:5px;
             cursor:pointer;
@@ -235,4 +235,5 @@
     }
 
 })();
+
 
