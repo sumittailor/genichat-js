@@ -148,7 +148,7 @@
     function getReply(msg) {
         msg = msg.toLowerCase();
 
-       if (msg.includes("hello") || msg.includes("helo") || msg.includes("helllo") || msg.includes("heloo") || msg.includes("helloo") || msg.includes("heello") || msg.includes("hallo") || msg.includes("hlelo") || msg.includes("hrllo") || msg.includes("jello") || msg.includes("kello") || msg.includes("hi") || msg.includes("hii") || msg.includes("hiii") || msg.includes("hey") || msg.includes("heyy"))
+       if (msg.includes("hello") || msg.includes("hlo") || msg.includes("helo") || msg.includes("helllo") || msg.includes("heloo") || msg.includes("helloo") || msg.includes("heello") || msg.includes("hallo") || msg.includes("hlelo") || msg.includes("hrllo") || msg.includes("jello") || msg.includes("kello") || msg.includes("hi") || msg.includes("hii") || msg.includes("hiii") || msg.includes("hey") || msg.includes("heyy"))
             return "Hello! How can I help you today?";
 
         if (msg.includes("price"))
@@ -188,4 +188,5 @@
     }
 
 })();
+
 
