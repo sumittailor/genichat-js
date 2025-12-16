@@ -230,10 +230,65 @@
                 "4) Power on vehicle.<br>" +
                 "5) Add IMEI in FeTaca Track App.<br>" +
                 "Full guide video: <a href=\"https://youtu.be/fXp1De_ZU1A?si=9aIcOR81i4CMKVx3\" target=\"_blank\" rel=\"noopener noreferrer\">Watch here</a>";
+        if (msg.includes("device activation") || msg.includes("activate device") || msg.includes("activation guide") || msg.includes("activation help"))
+            return "Device Activation – Easy Step-by-Step Guide
+Follow these simple steps to activate your device quickly and smoothly:
+
+Step 1: Enter Your Personal Details
+
+Name – Enter your full name
+
+Email ID – Provide an active email address
+
+Phone Number – Enter your mobile number
+
+Step 2: Provide Address Details
+
+Address – Enter your complete address with City & State
+
+Pin Code – Enter your area pin code
+
+Step 3: Enter Aadhaar Details (For KYC)
+
+Aadhaar Number – Enter your 12-digit Aadhaar number
+
+Upload Aadhaar Card Image – Upload a clear image showing the Aadhaar number
+
+Step 4: Enter Device Information
+
+Device IMEI Number – Enter the 8 or 15-digit IMEI number
+(You can find this on the device or warranty card)
+
+Step 5: Enter SIM Card Details
+
+SIM Card Number – Enter the 13 or 20-digit SIM number
+(Available on the SIM cover)
+
+Upload SIM Card Image – Upload a clear image showing the SIM number
+
+Step 6: Order & Warranty Details
+
+Order ID – Enter the Order ID from Amazon, Flipkart, or our website
+
+Upload Warranty Card Image – Upload the warranty card showing IMEI/SIM details
+
+Step 7: Additional Message (Optional)
+
+Use the message box to add any comments or special requests
+
+Step 8: Submit the Form
+
+Review all details carefully
+
+Click Submit
+
+✅ That’s it!
+Our team will verify your details and contact you within 24 hours to complete the activation.";
 
         return "Thank you! A support person will get back to you soon.";
     }
 
 })();
+
 
 
