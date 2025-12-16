@@ -236,7 +236,7 @@
     msg.includes("activation") ||
     msg.includes("device activate") ||
     msg.includes("start device") ||
-    msg.includes("Active / Live")
+    msg.includes("Active/Live")
 ) {
     return "🔗 <b>Support Page:</b> <a href='https://fetaca.com/support/' target='_blank'>https://fetaca.com/support/</a><br><br>" +
 
@@ -282,6 +282,7 @@
     }
 
 })();
+
 
 
 
