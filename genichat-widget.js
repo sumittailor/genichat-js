@@ -230,65 +230,53 @@
                 "4) Power on vehicle.<br>" +
                 "5) Add IMEI in FeTaca Track App.<br>" +
                 "Full guide video: <a href=\"https://youtu.be/fXp1De_ZU1A?si=9aIcOR81i4CMKVx3\" target=\"_blank\" rel=\"noopener noreferrer\">Watch here</a>";
-        if (msg.includes("device activation") || msg.includes("activate device") || msg.includes("activation guide") || msg.includes("activation help"))
-            return "Device Activation – Easy Step-by-Step Guide
-Follow these simple steps to activate your device quickly and smoothly:
+       if (
+    msg.includes("activate") ||
+    msg.includes("activation") ||
+    msg.includes("device activate") ||
+    msg.includes("start device")
+) {
+    return "📋 <b>Device Activation – Easy Step-by-Step Guide</b><br><br>" +
 
-Step 1: Enter Your Personal Details
+        "1️⃣ <b>Enter Personal Details</b><br>" +
+        "• Name – Full name<br>" +
+        "• Email ID – Active email<br>" +
+        "• Phone Number – Mobile number<br><br>" +
 
-Name – Enter your full name
+        "2️⃣ <b>Provide Address Details</b><br>" +
+        "• Address – City & State<br>" +
+        "• Pin Code – Area pin code<br><br>" +
 
-Email ID – Provide an active email address
+        "3️⃣ <b>Aadhaar Details (KYC)</b><br>" +
+        "• Aadhaar Number – 12 digits<br>" +
+        "• Upload Aadhaar image<br><br>" +
 
-Phone Number – Enter your mobile number
+        "4️⃣ <b>Device Information</b><br>" +
+        "• IMEI Number – 8 or 15 digits<br>" +
+        "(Available on device / warranty card)<br><br>" +
 
-Step 2: Provide Address Details
+        "5️⃣ <b>SIM Card Details</b><br>" +
+        "• SIM Number – 13 or 20 digits<br>" +
+        "• Upload SIM card image<br><br>" +
 
-Address – Enter your complete address with City & State
+        "6️⃣ <b>Order & Warranty</b><br>" +
+        "• Order ID (Amazon / Flipkart / Website)<br>" +
+        "• Upload warranty card image<br><br>" +
 
-Pin Code – Enter your area pin code
+        "7️⃣ <b>Additional Message (Optional)</b><br>" +
+        "• Add comments if any<br><br>" +
 
-Step 3: Enter Aadhaar Details (For KYC)
+        "8️⃣ <b>Submit the Form</b><br>" +
+        "• Review details & click Submit<br><br>" +
 
-Aadhaar Number – Enter your 12-digit Aadhaar number
-
-Upload Aadhaar Card Image – Upload a clear image showing the Aadhaar number
-
-Step 4: Enter Device Information
-
-Device IMEI Number – Enter the 8 or 15-digit IMEI number
-(You can find this on the device or warranty card)
-
-Step 5: Enter SIM Card Details
-
-SIM Card Number – Enter the 13 or 20-digit SIM number
-(Available on the SIM cover)
-
-Upload SIM Card Image – Upload a clear image showing the SIM number
-
-Step 6: Order & Warranty Details
-
-Order ID – Enter the Order ID from Amazon, Flipkart, or our website
-
-Upload Warranty Card Image – Upload the warranty card showing IMEI/SIM details
-
-Step 7: Additional Message (Optional)
-
-Use the message box to add any comments or special requests
-
-Step 8: Submit the Form
-
-Review all details carefully
-
-Click Submit
-
-✅ That’s it!
-Our team will verify your details and contact you within 24 hours to complete the activation.";
+        "✅ Our team will verify your details and contact you within <b>24 hours</b>.";
+}
 
         return "Thank you! A support person will get back to you soon.";
     }
 
 })();
+
 
 
 
