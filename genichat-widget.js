@@ -98,7 +98,7 @@
         "E-Lock",
         "Order",
         "How to Install a GPS Device",
-        "How to Device Active/Live",
+        "How to Device activate",
     ];
 
     const suggContainer = document.getElementById("gcSuggestions");
@@ -236,7 +236,7 @@
     msg.includes("activation") ||
     msg.includes("device activate") ||
     msg.includes("start device") ||
-    msg.includes("Active/Live")
+    msg.includes("Active")
 ) {
     return "🔗 <b>Support Page:</b> <a href='https://fetaca.com/support/' target='_blank'>https://fetaca.com/support/</a><br><br>" +
 
@@ -282,6 +282,7 @@
     }
 
 })();
+
 
 
 
