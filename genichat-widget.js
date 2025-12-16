@@ -237,7 +237,9 @@
     msg.includes("device activate") ||
     msg.includes("start device")
 ) {
-    return "📋 <b>Device Activation – Easy Step-by-Step Guide</b><br><br>" +
+    return "🔗 <b>Support Page:</b> <a href='https://fetaca.com/support/' target='_blank'>https://fetaca.com/support/</a><br><br>" +
+
+        "📋 <b>Device Activation – Easy Step-by-Step Guide</b><br><br>" +
 
         "1️⃣ <b>Enter Personal Details</b><br>" +
         "• Name – Full name<br>" +
@@ -270,12 +272,16 @@
         "8️⃣ <b>Submit the Form</b><br>" +
         "• Review details & click Submit<br><br>" +
 
-        "✅ Our team will verify your details and contact you within <b>24 hours</b>.";
-       }
+        "✅ Our team will verify your details and contact you within <b>24 hours</b>.<br><br>" +
+
+        "🔗 <b>For full support, visit:</b> <a href='https://fetaca.com/support/' target='_blank'>https://fetaca.com/support/</a>";
+}
+
         return "Thank you! A support person will get back to you soon.";
     }
 
 })();
+
 
 
 
