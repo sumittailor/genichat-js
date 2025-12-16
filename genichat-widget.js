@@ -98,7 +98,7 @@
         "E-Lock",
         "Order",
         "How to Install a GPS Device",
-        "How to Device Active / Live",
+        "How to Device Active/Live",
     ];
 
     const suggContainer = document.getElementById("gcSuggestions");
@@ -282,6 +282,7 @@
     }
 
 })();
+
 
 
 
