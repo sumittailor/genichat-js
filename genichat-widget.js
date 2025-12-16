@@ -97,7 +97,8 @@
         "Track Device",
         "E-Lock",
         "Order",
-        "Installation"
+        "How GPS Installation"
+        "device activate"
     ];
 
     const suggContainer = document.getElementById("gcSuggestions");
@@ -276,6 +277,7 @@
     }
 
 })();
+
 
 
 
