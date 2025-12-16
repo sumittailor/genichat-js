@@ -271,11 +271,12 @@
         "• Review details & click Submit<br><br>" +
 
         "✅ Our team will verify your details and contact you within <b>24 hours</b>.";
-
+       }
         return "Thank you! A support person will get back to you soon.";
     }
 
 })();
+
 
 
 
