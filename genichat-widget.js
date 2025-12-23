@@ -204,8 +204,10 @@
         if (msg.includes("price"))
             return "Our pricing is flexible. What do you want to know?";
 
-        if (msg.includes("help"))
-            return "Sure! Tell me what issue you're facing,";
+        if (msg.includes("help")) {
+               setTimeout(showHelpOptions, 300);
+                  return "I’m here to help 😊";}
+
 
         if (msg.includes("track") || msg.includes("tracking"))
             return "You can track your device using the FeTaca Track App. Do you need the app link or help logging in?";
@@ -331,6 +333,7 @@
     }
 
 })();
+
 
 
 
