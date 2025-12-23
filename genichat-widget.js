@@ -5,6 +5,8 @@
         themeColor: "#1E3A8A",
         adminStatus: "offline",
         adminNumber: ""
+        whatsappB2B: "https://wa.me/919079133544?text=Hello%20I%20want%20B2B%20Sales%20Inquiry",
+    whatsappSupport: "https://wa.me/917073073735?text=Hello%20I%20need%20Support"
     };
 
     async function getAdminStatus() {
@@ -203,7 +205,7 @@
             return "Our pricing is flexible. What do you want to know?";
 
         if (msg.includes("help"))
-            return "Sure! Tell me what issue you're facing.";
+            return "Sure! Tell me what issue you're facing,";
 
         if (msg.includes("track") || msg.includes("tracking"))
             return "You can track your device using the FeTaca Track App. Do you need the app link or help logging in?";
@@ -278,11 +280,59 @@
 
         "🔗 <b>For full support, visit:</b> <a href='https://fetaca.com/support/' target='_blank'>https://fetaca.com/support/</a>";
 }
+       //help option section //
+        function showHelpOptions() {
+    const box = document.getElementById("gcMessages");
 
+    const wrapper = document.createElement("div");
+    wrapper.style = `
+        background:#F3F4F6;
+        padding:10px;
+        margin:6px 0;
+        border-radius:6px;
+        text-align:left;
+    `;
+
+    wrapper.innerHTML = `
+        <b>Please choose an option:</b><br><br>
+        <button id="b2bBtn" style="
+            padding:8px 10px;
+            margin-bottom:6px;
+            width:100%;
+            background:#2563EB;
+            color:white;
+            border:none;
+            border-radius:5px;
+            cursor:pointer;
+        ">📞 Contact for B2B Sale</button>
+
+        <button id="supportBtn" style="
+            padding:8px 10px;
+            width:100%;
+            background:#059669;
+            color:white;
+            border:none;
+            border-radius:5px;
+            cursor:pointer;
+        ">🛠 Support & Assist</button>
+    `;
+
+    box.appendChild(wrapper);
+    box.scrollTop = box.scrollHeight;
+
+    document.getElementById("b2bBtn").onclick = () => {
+        window.open(config.whatsappB2B, "_blank");
+    };
+
+    document.getElementById("supportBtn").onclick = () => {
+        window.open(config.whatsappSupport, "_blank");
+    };
+}
         return "Thank you! A support person will get back to you soon.";
     }
 
 })();
+
 
 
 
