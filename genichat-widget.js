@@ -326,13 +326,14 @@
     };
 
     document.getElementById("supportBtn").onclick = () => {
-        window.open(config.whatsappSupport, "_blank");
+        window.open(config.whatsappSupport, "https://wa.me/917073073735?text=Hello%20I%20need%20Support");
     };
 }
  return "Thank you! A support person will get back to you soon.";
     }
 
 })();
+
 
 
 
