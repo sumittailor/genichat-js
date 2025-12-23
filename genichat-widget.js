@@ -322,7 +322,7 @@
     box.scrollTop = box.scrollHeight;
 
     document.getElementById("b2bBtn").onclick = () => {
-        window.open(config.whatsappB2B, "_blank");
+        window.open("https://wa.me/919079133544?text=Hello%20I%20want%20B2B%20Sales%20Inquiry");
     };
 
     document.getElementById("supportBtn").onclick = () => {
@@ -333,6 +333,7 @@
     }
 
 })();
+
 
 
 
