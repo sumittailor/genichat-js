@@ -4,7 +4,7 @@
         widgetTitle: "GeniChat",
         themeColor: "#1E3A8A",
         adminStatus: "offline",
-        adminNumber: ""
+        adminNumber: "",
         whatsappB2B: "https://wa.me/919079133544?text=Hello%20I%20want%20B2B%20Sales%20Inquiry",
     whatsappSupport: "https://wa.me/917073073735?text=Hello%20I%20need%20Support"
     };
@@ -285,6 +285,7 @@
     }
 
 })();
+
 
 
 
