@@ -327,11 +327,11 @@
     document.getElementById("supportBtn").onclick = () => {
         window.open(config.whatsappSupport, "_blank");
     };
-}
         return "Thank you! A support person will get back to you soon.";
     }
 
 })();
+
 
 
 
