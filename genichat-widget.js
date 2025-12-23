@@ -280,57 +280,12 @@
 
         "🔗 <b>For full support, visit:</b> <a href='https://fetaca.com/support/' target='_blank'>https://fetaca.com/support/</a>";
 }
-       //help option section //
-        function showHelpOptions() {
-    const box = document.getElementById("gcMessages");
-
-    const wrapper = document.createElement("div");
-    wrapper.style = `
-        background:#F3F4F6;
-        padding:10px;
-        margin:6px 0;
-        border-radius:6px;
-        text-align:left;
-    `;
-
-    wrapper.innerHTML = `
-        <b>Please choose an option:</b><br><br>
-        <button id="b2bBtn" style="
-            padding:8px 10px;
-            margin-bottom:6px;
-            width:100%;
-            background:#2563EB;
-            color:white;
-            border:none;
-            border-radius:5px;
-            cursor:pointer;
-        ">📞 Contact for B2B Sale</button>
-
-        <button id="supportBtn" style="
-            padding:8px 10px;
-            width:100%;
-            background:#059669;
-            color:white;
-            border:none;
-            border-radius:5px;
-            cursor:pointer;
-        ">🛠 Support & Assist</button>
-    `;
-
-    box.appendChild(wrapper);
-    box.scrollTop = box.scrollHeight;
-
-    document.getElementById("b2bBtn").onclick = () => {
-        window.open(config.whatsappB2B, "_blank");
-    };
-
-    document.getElementById("supportBtn").onclick = () => {
-        window.open(config.whatsappSupport, "_blank");
-    };
+      
         return "Thank you! A support person will get back to you soon.";
     }
 
 })();
+
 
 
 
