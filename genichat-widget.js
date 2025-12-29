@@ -1,13 +1,5 @@
 (function () { 
 
-    // Collect user info (You can adjust how you want to collect these, here example hardcoded)
-    // Ideally, you should ask user for name, number, email once before chatting and store in genichatUserInfo.
-    window.genichatUserInfo = window.genichatUserInfo || {
-        name: "",   // Fill from your form inputs or prompt
-        number: "", // Fill from your form inputs or prompt
-        email: ""   // Fill from your form inputs or prompt
-    };
-
     const config = window.genichatConfig || {
         widgetTitle: "GeniChat",
         themeColor: "#1E3A8A",
@@ -71,16 +63,10 @@
 
         <div id="gcMessages" style="flex:1; padding:10px; overflow-y:auto; font-size:14px;"></div>
 
+        <div id="gcInputWrapper" style="padding:10px;"></div>
+
         <div style="padding:10px;">
             <div id="gcSuggestions" style="display:flex; gap:5px; flex-wrap:wrap;"></div>
-        </div>
-
-        <div style="padding:10px; display:flex; gap:5px;">
-            <input id="gcInput" type="text" placeholder="Type message..."
-                style="flex:1;padding:8px;border:1px solid #ccc;border-radius:5px;" />
-            <button id="gcSend" 
-                style="padding:8px 12px;background:${config.themeColor};
-                color:white;border:none;border-radius:5px;">Send</button>
         </div>
     `;
     document.body.appendChild(chatBox);
@@ -92,10 +78,51 @@
         chatBox.style.display = chatBox.style.display === "none" ? "flex" : "none";
     };
 
-    document.getElementById("gcSend").onclick = sendMsg;
-    document.getElementById("gcInput").addEventListener("keypress", (e) => {
-        if (e.key === "Enter") sendMsg();
-    });
+    const messagesDiv = document.getElementById("gcMessages");
+    const inputWrapper = document.getElementById("gcInputWrapper");
+
+    // ------------------------------
+    // PRE-CHAT FORM
+    // ------------------------------
+    function showPreChatForm() {
+        inputWrapper.innerHTML = `
+            <input type="text" id="gcName" placeholder="Your Name" style="width:100%;margin-bottom:5px;padding:7px;">
+            <input type="text" id="gcNumber" placeholder="Mobile Number" style="width:100%;margin-bottom:5px;padding:7px;">
+            <input type="email" id="gcEmail" placeholder="Email Address" style="width:100%;margin-bottom:5px;padding:7px;">
+            <textarea id="gcFirstMsg" placeholder="Type your first message" rows="2" style="width:100%;margin-bottom:5px;padding:7px;"></textarea>
+            <button id="gcStartChat" style="width:100%;padding:8px;background:${config.themeColor};color:#fff;border:none;border-radius:5px;">Start Chat</button>
+        `;
+        document.getElementById("gcStartChat").onclick = startChat;
+    }
+
+    function startChat() {
+        const name = document.getElementById("gcName").value.trim();
+        const number = document.getElementById("gcNumber").value.trim();
+        const email = document.getElementById("gcEmail").value.trim();
+        const message = document.getElementById("gcFirstMsg").value.trim();
+
+        if(!name || !number || !email || !message){ alert('Please fill all fields'); return; }
+
+        window.genichatUserInfo = {name, number, email};
+
+        sendMsg(message, 'initial');
+    }
+
+    // ------------------------------
+    // NORMAL CHAT INPUT
+    // ------------------------------
+    function showChatInput() {
+        inputWrapper.innerHTML = `
+            <div style="display:flex; gap:5px;">
+                <input id="gcInput" type="text" placeholder="Type message..." style="flex:1;padding:8px;border:1px solid #ccc;border-radius:5px;">
+                <button id="gcSend" style="padding:8px 12px;background:${config.themeColor};color:white;border:none;border-radius:5px;">Send</button>
+            </div>
+        `;
+        document.getElementById("gcSend").onclick = sendMsg;
+        document.getElementById("gcInput").addEventListener("keypress", (e) => {
+            if (e.key === "Enter") sendMsg();
+        });
+    }
 
     // ------------------------------
     // DEFAULT SUGGESTIONS
@@ -124,7 +151,8 @@
             font-size:13px;
         `;
         btn.onclick = () => {
-            document.getElementById("gcInput").value = sugg;
+            const input = document.getElementById("gcInput");
+            if(input) input.value = sugg;
             sendMsg();
         };
         suggContainer.appendChild(btn);
@@ -133,68 +161,50 @@
     // ------------------------------
     // SEND MESSAGE FUNCTION
     // ------------------------------
-    async function sendMsg() {
+    async function sendMsg(initialMsg=null) {
         const input = document.getElementById("gcInput");
-        const msg = input.value.trim();
+        const msg = initialMsg || (input ? input.value.trim() : "");
         if (!msg) return;
-
-        // Before sending, check if user info is filled. If not, ask.
-        if (!window.genichatUserInfo.name || !window.genichatUserInfo.number || !window.genichatUserInfo.email) {
-            // You can customize this prompt or use a form modal
-            window.genichatUserInfo.name = prompt("Please enter your Name:", "") || "";
-            window.genichatUserInfo.number = prompt("Please enter your Mobile Number:", "") || "";
-            window.genichatUserInfo.email = prompt("Please enter your Email:", "") || "";
-            if (!window.genichatUserInfo.name || !window.genichatUserInfo.number || !window.genichatUserInfo.email) {
-                alert("Name, Mobile, and Email are required to chat.");
-                return;
-            }
-        }
+        if(input) input.value = "";
 
         addMsg("user", msg);
-        input.value = "";
 
-        // 🔥 ALWAYS SEND TO WHATSAPP + SAVE LOG
-        await sendToWhatsApp(msg);
+        // 🔥 ALWAYS SEND TO WHATSAPP
+        sendToWhatsApp(msg);
+
         const status = await getAdminStatus();
 
         if (status === "online") {
             addMsg("bot", "Admin is online and will reply shortly 😊");
+            if(initialMsg) showChatInput();
             return;
         }
 
         setTimeout(() => {
             addMsg("bot", getReply(msg));
+            if(initialMsg) showChatInput();
         }, 500);
     }
 
     // ------------------------------
-    // WHATSAPP FORWARD & LOG SAVE (REST API Call)
+    // WHATSAPP FORWARD
     // ------------------------------
-    async function sendToWhatsApp(message) {
-        const user = window.genichatUserInfo || {};
-        const sessionId = 'geni_' + Date.now(); // Simple session ID, can be improved by cookies/localStorage
-
-        try {
-            const res = await fetch("/wp-json/genichat/v1/send", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    session_id: sessionId,
-                    name: user.name || '',
-                    number: user.number || '',
-                    email: user.email || '',
-                    message: message,
-                    type: 'chat'
-                })
-            });
-            const data = await res.json();
-            if (data.success && data.online && data.whatsapp_url) {
-                window.open(data.whatsapp_url, "_blank");
+    function sendToWhatsApp(message) {
+        fetch("/wp-json/genichat/v1/send", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+                message: message, 
+                user: window.genichatUserInfo || {}
+            })
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.success && res.online && res.whatsapp_url) {
+                window.open(res.whatsapp_url, "_blank");
             }
-            console.log("WhatsApp API Response:", data);
-        } catch (err) {
-            console.error("WhatsApp API Error:", err);
-        }
+        })
+        .catch(err => console.error("WA Error:", err));
     }
 
     // ------------------------------
@@ -210,111 +220,57 @@
             word-wrap: break-word;
             white-space: pre-wrap;
         `;
-
-        if (sender === "bot") {
-            msg.innerHTML = text;
-        } else {
-            msg.innerText = text;
-        }
+        msg.innerHTML = text;
         box.appendChild(msg);
         box.scrollTop = box.scrollHeight;
     }
 
     // ------------------------------
-    // BOT REPLY FUNCTION
+    // BOT REPLY FUNCTION (UNCHANGED)
     // ------------------------------
     function getReply(msg) {
         msg = msg.toLowerCase();
-
         if (msg.includes("hello") || msg.includes("hi") || msg.includes("hey"))
             return "Hello! How can I help you today?";
-
         if (msg.includes("price"))
             return "Our pricing is flexible. What do you want to know?";
-
         if (msg.includes("help")) {
             setTimeout(showHelpOptions, 300);
             return "I’m here to help 😊";
         }
-
         if (msg.includes("track") || msg.includes("tracking"))
             return "You can track your device using the FeTaca Track App. Do you need the app link or help logging in?";
-
         if (msg.includes("elog") || msg.includes("e-lock") || msg.includes("elock"))
             return "FeTaca E-Lock is a waterproof GPS smart lock with real-time tracking, tamper alerts, and remote unlocking. Would you like features, price, or installation details?";
-
         if (msg.includes("vehicle") || msg.includes("car") || msg.includes("bike"))
             return "We have multiple GPS trackers for cars, bikes, and trucks. Tell me your vehicle type and I’ll suggest the best option.";
-
         if (msg.includes("app") || msg.includes("login") || msg.includes("account"))
             return "For app support, tell me your issue — login problem, password reset, or device not showing?";
-
         if (msg.includes("order") || msg.includes("buy") || msg.includes("purchase"))
             return "Great! Tell me which product you want to order, and I’ll share the purchase link.";
-
         if (msg.includes("contact") || msg.includes("number") || msg.includes("call"))
             return "You can contact our support team anytime. Would you like the phone number or WhatsApp link?";
-
         if (msg.includes("install") || msg.includes("installation") || msg.includes("setup") || msg.includes("fitting"))
-            return "Wired GPS Tracker Installation:<br>" +
-                "1) Hide device under dashboard/seat.<br>" +
-                "2) RED → +12V, BLACK → ground, YELLOW → ignition.<br>" +
-                "3) Insert SIM with data.<br>" +
-                "4) Power on vehicle.<br>" +
-                "5) Add IMEI in FeTaca Track App.<br>" +
-                "Full guide video: <a href=\"https://youtu.be/fXp1De_ZU1A?si=9aIcOR81i4CMKVx3\" target=\"_blank\" rel=\"noopener noreferrer\">Watch here</a>";
-
+            return "Wired GPS Tracker Installation:<br>1) Hide device under dashboard/seat.<br>2) RED → +12V, BLACK → ground, YELLOW → ignition.<br>3) Insert SIM with data.<br>4) Power on vehicle.<br>5) Add IMEI in FeTaca Track App.<br>Full guide video: <a href=\"https://youtu.be/fXp1De_ZU1A?si=9aIcOR81i4CMKVx3\" target=\"_blank\" rel=\"noopener noreferrer\">Watch here</a>";
         if (
-            msg.includes("activate") ||
-            msg.includes("activation") ||
-            msg.includes("device activate") ||
-            msg.includes("start device") ||
-            msg.toLowerCase().includes("turn on device") ||
-            msg.includes("Active")
+            msg.includes("activate") || msg.includes("activation") || msg.includes("device activate") ||
+            msg.includes("start device") || msg.toLowerCase().includes("turn on device") || msg.includes("Active")
         ) {
             return "🔗 <b>Support Page:</b> <a href='https://fetaca.com/support/' target='_blank'>https://fetaca.com/support/</a><br><br>" +
-
                 "📋 <b>Device Activation – Easy Step-by-Step Guide</b><br><br>" +
-
-                "1️⃣ <b>Enter Personal Details</b><br>" +
-                "• Name – Full name<br>" +
-                "• Email ID – Active email<br>" +
-                "• Phone Number – Mobile number<br><br>" +
-
-                "2️⃣ <b>Provide Address Details</b><br>" +
-                "• Address – City & State<br>" +
-                "• Pin Code – Area pin code<br><br>" +
-
-                "3️⃣ <b>Aadhaar Details (KYC)</b><br>" +
-                "• Aadhaar Number – 12 digits<br>" +
-                "• Upload Aadhaar image<br><br>" +
-
-                "4️⃣ <b>Device Information</b><br>" +
-                "• IMEI Number – 8 or 15 digits<br>" +
-                "(Available on device / warranty card)<br><br>" +
-
-                "5️⃣ <b>SIM Card Details</b><br>" +
-                "• SIM Number – 13 or 20 digits<br>" +
-                "• Upload SIM card image<br><br>" +
-
-                "6️⃣ <b>Order & Warranty</b><br>" +
-                "• Order ID (Amazon / Flipkart / Website)<br>" +
-                "• Upload warranty card image<br><br>" +
-
-                "7️⃣ <b>Additional Message (Optional)</b><br>" +
-                "• Add comments if any<br><br>" +
-
-                "8️⃣ <b>Submit the Form</b><br>" +
-                "• Review details & click Submit<br><br>" +
-
+                "1️⃣ <b>Enter Personal Details</b><br>• Name – Full name<br>• Email ID – Active email<br>• Phone Number – Mobile number<br><br>" +
+                "2️⃣ <b>Provide Address Details</b><br>• Address – City & State<br>• Pin Code – Area pin code<br><br>" +
+                "3️⃣ <b>Aadhaar Details (KYC)</b><br>• Aadhaar Number – 12 digits<br>• Upload Aadhaar image<br><br>" +
+                "4️⃣ <b>Device Information</b><br>• IMEI Number – 8 or 15 digits<br>(Available on device / warranty card)<br><br>" +
+                "5️⃣ <b>SIM Card Details</b><br>• SIM Number – 13 or 20 digits<br>• Upload SIM card image<br><br>" +
+                "6️⃣ <b>Order & Warranty</b><br>• Order ID (Amazon / Flipkart / Website)<br>• Upload warranty card image<br><br>" +
+                "7️⃣ <b>Additional Message (Optional)</b><br>• Add comments if any<br><br>" +
+                "8️⃣ <b>Submit the Form</b><br>• Review details & click Submit<br><br>" +
                 "✅ Our team will verify your details and contact you within <b>24 hours</b>.<br><br>" +
-
                 "🔗 <b>For full support, visit:</b> <a href='https://fetaca.com/support/' target='_blank'>https://fetaca.com/support/</a>";
         }
-
         function showHelpOptions() {
             const box = document.getElementById("gcMessages");
-
             const wrapper = document.createElement("div");
             wrapper.style = `
                 background:#F3F4F6;
@@ -323,44 +279,27 @@
                 border-radius:6px;
                 text-align:left;
             `;
-
             wrapper.innerHTML = `
                 <b>Please choose an option:</b><br><br>
-                <button id="b2bBtn" style="
-                    padding:8px 10px;
-                    margin-bottom:6px;
-                    width:100%;
-                    background:#2563EB;
-                    color:white;
-                    border:none;
-                    border-radius:5px;
-                    cursor:pointer;
-                ">📞 Contact for B2B Sale</button>
-
-                <button id="supportBtn" style="
-                    padding:8px 10px;
-                    width:100%;
-                    background:#059669;
-                    color:white;
-                    border:none;
-                    border-radius:5px;
-                    cursor:pointer;
-                ">🛠 Support & Assist</button>
+                <button id="b2bBtn" style="padding:8px 10px;margin-bottom:6px;width:100%;background:#2563EB;color:white;border:none;border-radius:5px;cursor:pointer;">📞 Contact for B2B Sale</button>
+                <button id="supportBtn" style="padding:8px 10px;width:100%;background:#059669;color:white;border:none;border-radius:5px;cursor:pointer;">🛠 Support & Assist</button>
             `;
-
             box.appendChild(wrapper);
             box.scrollTop = box.scrollHeight;
-
             document.getElementById("b2bBtn").onclick = () => {
                 window.open("https://wa.me/919079133544?text=Hello%20I%20want%20B2B%20Sales%20Inquiry");
             };
-
             document.getElementById("supportBtn").onclick = () => {
                 window.open("https://wa.me/917073073735?text=Hello%20I%20need%20Support");
             };
         }
-
         return "Thank you! A support person will get back to you soon.";
     }
+
+    // ------------------------------
+    // SHOW PRE-CHAT FORM ON START
+    // ------------------------------
+    addMsg("bot", "Hi! Please enter your details to start chatting.");
+    showPreChatForm();
 
 })();
