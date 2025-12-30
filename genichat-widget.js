@@ -9,6 +9,19 @@
         whatsappSupport: "https://wa.me/917073073735?text=Hello%20I%20need%20Support"
     };
 
+    // ------------------------------
+    // SESSION ID (FIX)
+    // ------------------------------
+    function getSessionId() {
+        let sid = localStorage.getItem("genichat_session_id");
+        if (!sid) {
+            sid = "gc_" + Date.now();
+            localStorage.setItem("genichat_session_id", sid);
+        }
+        return sid;
+    }
+    const SESSION_ID = getSessionId();
+
     async function getAdminStatus() {
         return fetch("/wp-json/genichat/v1/status")
             .then(res => res.json())
@@ -60,20 +73,14 @@
         <div style="background:${config.themeColor};color:white;padding:12px;font-size:18px;" id="gcHeader">
             ${config.widgetTitle}
         </div>
-
         <div id="gcMessages" style="flex:1; padding:10px; overflow-y:auto; font-size:14px;"></div>
-
         <div id="gcInputWrapper" style="padding:10px;"></div>
-
         <div style="padding:10px;">
             <div id="gcSuggestions" style="display:flex; gap:5px; flex-wrap:wrap;"></div>
         </div>
     `;
     document.body.appendChild(chatBox);
 
-    // ------------------------------
-    // CHAT BUTTON TOGGLE
-    // ------------------------------
     chatButton.onclick = () => {
         chatBox.style.display = chatBox.style.display === "none" ? "flex" : "none";
     };
@@ -101,11 +108,14 @@
         const email = document.getElementById("gcEmail").value.trim();
         const message = document.getElementById("gcFirstMsg").value.trim();
 
-        if(!name || !number || !email || !message){ alert('Please fill all fields'); return; }
+        if(!name || !number || !email || !message){
+            alert('Please fill all fields');
+            return;
+        }
 
-        window.genichatUserInfo = {name, number, email};
+        window.genichatUserInfo = { name, number, email };
 
-        sendMsg(message, 'initial');
+        sendMsg(message, true);
     }
 
     // ------------------------------
@@ -118,50 +128,16 @@
                 <button id="gcSend" style="padding:8px 12px;background:${config.themeColor};color:white;border:none;border-radius:5px;">Send</button>
             </div>
         `;
-        document.getElementById("gcSend").onclick = sendMsg;
-        document.getElementById("gcInput").addEventListener("keypress", (e) => {
+        document.getElementById("gcSend").onclick = () => sendMsg();
+        document.getElementById("gcInput").addEventListener("keypress", e => {
             if (e.key === "Enter") sendMsg();
         });
     }
 
     // ------------------------------
-    // DEFAULT SUGGESTIONS
+    // SEND MESSAGE
     // ------------------------------
-    const suggestions = [
-        "Hello",
-        "Price",
-        "Help",
-        "Track Device",
-        "E-Lock",
-        "Order",
-        "How to Install a GPS Device",
-        "How to Device activate",
-    ];
-
-    const suggContainer = document.getElementById("gcSuggestions");
-    suggestions.forEach(sugg => {
-        const btn = document.createElement("button");
-        btn.innerText = sugg;
-        btn.style = `
-            padding:5px 10px;
-            background:#0000ff;
-            border:1px solid #ccc;
-            border-radius:5px;
-            cursor:pointer;
-            font-size:13px;
-        `;
-        btn.onclick = () => {
-            const input = document.getElementById("gcInput");
-            if(input) input.value = sugg;
-            sendMsg();
-        };
-        suggContainer.appendChild(btn);
-    });
-
-    // ------------------------------
-    // SEND MESSAGE FUNCTION
-    // ------------------------------
-    async function sendMsg(initialMsg=null) {
+    async function sendMsg(initialMsg=null, isInitial=false) {
         const input = document.getElementById("gcInput");
         const msg = initialMsg || (input ? input.value.trim() : "");
         if (!msg) return;
@@ -169,64 +145,59 @@
 
         addMsg("user", msg);
 
-        // 🔥 ALWAYS SEND TO WHATSAPP
         sendToWhatsApp(msg);
 
         const status = await getAdminStatus();
 
         if (status === "online") {
             addMsg("bot", "Admin is online and will reply shortly 😊");
-            if(initialMsg) showChatInput();
+            if(isInitial) showChatInput();
             return;
         }
 
         setTimeout(() => {
             addMsg("bot", getReply(msg));
-            if(initialMsg) showChatInput();
+            if(isInitial) showChatInput();
         }, 500);
     }
 
     // ------------------------------
-    // WHATSAPP FORWARD
+    // SEND TO PHP (FIXED)
     // ------------------------------
     function sendToWhatsApp(message) {
         fetch("/wp-json/genichat/v1/send", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-                message: message, 
-                user: window.genichatUserInfo || {}
+            body: JSON.stringify({
+                session_id: SESSION_ID,
+                name: window.genichatUserInfo?.name || "",
+                number: window.genichatUserInfo?.number || "",
+                email: window.genichatUserInfo?.email || "",
+                message: message,
+                type: "chat"
             })
         })
-        .then(r => r.json())
-        .then(res => {
-            if (res.success && res.online && res.whatsapp_url) {
-                window.open(res.whatsapp_url, "_blank");
-            }
-        })
-        .catch(err => console.error("WA Error:", err));
+        .catch(err => console.error("API Error:", err));
     }
 
     // ------------------------------
-    // ADD MESSAGE TO CHAT BOX
+    // ADD MESSAGE
     // ------------------------------
     function addMsg(sender, text) {
-        const box = document.getElementById("gcMessages");
         const msg = document.createElement("div");
         msg.style = `
             background:${sender === "user" ? "#DBEAFE" : "#F3F4F6"};
             padding:8px; margin:6px 0; border-radius:5px;
             text-align:${sender === "user" ? "right" : "left"};
-            word-wrap: break-word;
             white-space: pre-wrap;
         `;
         msg.innerHTML = text;
-        box.appendChild(msg);
-        box.scrollTop = box.scrollHeight;
+        messagesDiv.appendChild(msg);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 
     // ------------------------------
-    // BOT REPLY FUNCTION (UNCHANGED)
+    // BOT REPLY (UNCHANGED)
     // ------------------------------
     function getReply(msg) {
         msg = msg.toLowerCase();
@@ -297,7 +268,7 @@
     }
 
     // ------------------------------
-    // SHOW PRE-CHAT FORM ON START
+    // INIT
     // ------------------------------
     addMsg("bot", "Hi! Please enter your details to start chatting.");
     showPreChatForm();
